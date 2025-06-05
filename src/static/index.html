@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecurePaste - CyberSecShield</title>
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #00c853;
+            --dark-bg: #1a2332;
+            --darker-bg: #141c28;
+            --light-text: #e0e0e0;
+            --border-radius: 6px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: var(--darker-bg);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            color: var(--light-text);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .logo svg {
+            margin-right: 10px;
+            fill: var(--primary-color);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .restricted-area {
+            background-color: rgba(66, 133, 244, 0.1);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+        
+        .restricted-area:hover {
+            background-color: rgba(66, 133, 244, 0.2);
+        }
+        
+        main {
+            padding: 40px 0;
+        }
+        
+        .tool-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .tool-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--light-text);
+        }
+        
+        .tool-header h1 span {
+            color: var(--primary-color);
+        }
+        
+        .tool-header p {
+            font-size: 1.1rem;
+            color: rgba(224, 224, 224, 0.8);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .paste-container {
+            background-color: var(--darker-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .paste-label {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .paste-textarea {
+            width: 100%;
+            min-height: 250px;
+            background-color: rgba(20, 28, 40, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            color: var(--light-text);
+            font-family: 'Consolas', monospace;
+            font-size: 0.95rem;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+        
+        .paste-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .encryption-notice {
+            font-size: 0.85rem;
+            color: rgba(224, 224, 224, 0.6);
+            margin-bottom: 20px;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .option-group {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .option-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .option-title svg {
+            margin-right: 10px;
+            fill: var(--primary-color);
+        }
+        
+        .expiration-select {
+            width: 100%;
+            padding: 12px;
+            background-color: rgba(20, 28, 40, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            color: var(--light-text);
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        
+        .expiration-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .custom-expiration {
+            display: none;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .custom-expiration.active {
+            display: flex;
+        }
+        
+        .custom-expiration input {
+            flex: 1;
+            padding: 12px;
+            background-color: rgba(20, 28, 40, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            color: var(--light-text);
+            font-size: 0.95rem;
+        }
+        
+        .custom-expiration select {
+            padding: 12px;
+            background-color: rgba(20, 28, 40, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            color: var(--light-text);
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-right: 10px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--secondary-color);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .toggle-label {
+            font-size: 0.95rem;
+        }
+        
+        .create-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .create-button svg {
+            margin-right: 10px;
+            fill: white;
+        }
+        
+        .create-button:hover {
+            background-color: #3367d6;
+        }
+        
+        .result-container {
+            display: none;
+            background-color: var(--darker-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-top: 30px;
+        }
+        
+        .result-container.active {
+            display: block;
+        }
+        
+        .result-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .secure-link {
+            background-color: rgba(20, 28, 40, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .secure-link input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--light-text);
+            font-family: 'Consolas', monospace;
+            font-size: 0.95rem;
+        }
+        
+        .secure-link input:focus {
+            outline: none;
+        }
+        
+        .copy-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 8px 15px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+        
+        .copy-button:hover {
+            background-color: #3367d6;
+        }
+        
+        .security-info {
+            background-color: rgba(0, 200, 83, 0.1);
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            font-size: 0.95rem;
+        }
+        
+        .security-info p {
+            margin-bottom: 10px;
+        }
+        
+        .security-info p:last-child {
+            margin-bottom: 0;
+        }
+        
+        footer {
+            background-color: var(--darker-bg);
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            color: var(--light-text);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .footer-links a {
+            color: rgba(224, 224, 224, 0.6);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .copyright {
+            margin-top: 20px;
+            text-align: center;
+            color: rgba(224, 224, 224, 0.4);
+            font-size: 0.85rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .tool-header h1 {
+                font-size: 2rem;
+            }
+            
+            .options-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .option-group {
+                min-width: 100%;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+            
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="#" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                </svg>
+                CyberSecShield
+            </a>
+            <nav class="nav-links">
+                <a href="#">Home</a>
+                <a href="#">Training</a>
+                <a href="#">Tips</a>
+                <a href="#">Tools</a>
+                <a href="#">Threat Feeds</a>
+                <a href="#">Blog</a>
+                <a href="#">Contact</a>
+            </nav>
+            <a href="#" class="restricted-area">Restricted Area</a>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div class="tool-header">
+                <h1>Secure<span>Paste</span></h1>
+                <p>End-to-end encrypted text sharing with customizable expiration and self-destruct capabilities. Your data remains private and secure.</p>
+            </div>
+            
+            <div class="paste-container">
+                <label for="paste-content" class="paste-label">Paste Content</label>
+                <textarea id="paste-content" class="paste-textarea" placeholder="Type or paste the content to encrypt..."></textarea>
+                <p class="encryption-notice">The content will be encrypted locally before being sent to the server.</p>
+                
+                <div class="options-container">
+                    <div class="option-group">
+                        <div class="option-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                            </svg>
+                            Expiration
+                        </div>
+                        <select id="expiration-select" class="expiration-select">
+                            <option value="1h">1 Hour</option>
+                            <option value="1d">1 Day</option>
+                            <option value="1w" selected>1 Week</option>
+                            <option value="1m">1 Month</option>
+                            <option value="3m">3 Months</option>
+                            <option value="6m">6 Months</option>
+                            <option value="1y">1 Year</option>
+                            <option value="5y">5 Years</option>
+                            <option value="never">Never Expire</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                        <div id="custom-expiration" class="custom-expiration">
+                            <input type="number" id="custom-value" min="1" value="1">
+                            <select id="custom-unit">
+                                <option value="h">Hours</option>
+                                <option value="d">Days</option>
+                                <option value="w">Weeks</option>
+                                <option value="m">Months</option>
+                                <option value="y">Years</option>
+                            </select>
+                        </div>
+                        <p class="expiration-notice">After this period, the paste will be automatically deleted.</p>
+                    </div>
+                    
+                    <div class="option-group">
+                        <div class="option-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/>
+                            </svg>
+                            Self-Destruct
+                        </div>
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="self-destruct-toggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">If enabled, the paste will be deleted after the first view.</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="create-button" class="create-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                    </svg>
+                    Create Encrypted Paste
+                </button>
+            </div>
+            
+            <div id="result-container" class="result-container">
+                <h2 class="result-title">Secure Link Generated</h2>
+                <div class="secure-link">
+                    <input type="text" id="secure-link-input" readonly>
+                    <button id="copy-button" class="copy-button">Copy</button>
+                </div>
+                <div class="security-info">
+                    <p><strong>Security Information:</strong></p>
+                    <p>The link contains the decryption key in the URL fragment (#), which is never sent to the server. Share this link securely with your intended recipient.</p>
+                    <p>Remember: Once the link expires or self-destructs after viewing, the content cannot be recovered.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <a href="#" class="footer-logo">CyberSecShield</a>
+                <div class="footer-links">
+                    <a href="#">Home</a>
+                    <a href="#">Training</a>
+                    <a href="#">Tips</a>
+                    <a href="#">Tools</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Use</a>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2025 CyberSecShield. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    
+    <script src="/js/secure-paste.js"></script>
+</body>
+</html>
